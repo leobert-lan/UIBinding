@@ -1,5 +1,6 @@
 package osp.leobert.android.uibindingsample
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -42,5 +43,8 @@ class MainActivity : AppCompatActivity() {
         holder.tvHellos
 
         tvHello.bindClick { DialogModule.provide(this, this.lifecycle).show() }
+        binding.root.bindClick {
+            startActivity(Intent(this, MainActivity2::class.java))
+        }
     }
 }

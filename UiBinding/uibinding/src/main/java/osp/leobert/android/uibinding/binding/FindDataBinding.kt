@@ -23,7 +23,7 @@ class FindDataBinding<T : ViewDataBinding>(
 
         return this.property ?: let {
             val view = viewProvider.provide()
-            val bind = DataBindingUtil.findBinding<T>(view)
+            val bind = DataBindingUtil.bind<T>(view)
                 ?: throw IllegalStateException(
                     "could not find binding ${targetClazz.name}"
                 )

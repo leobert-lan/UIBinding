@@ -8,17 +8,18 @@
     </data>
 
     <LinearLayout
+        android:id="@+id/ll_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:gravity="center_horizontal"
+        android:orientation="vertical"
         tools:context=".MainActivity">
 
         <TextView
-            android:padding="15dp"
             android:id="@+id/hello"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="15dp"
             android:text="Hello World!"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -26,10 +27,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:padding="15dp"
             android:id="@+id/hello1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="15dp"
             android:text="Hello World!1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -37,10 +38,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:padding="15dp"
             android:id="@+id/hello2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="15dp"
             android:text="Hello World!2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -48,10 +49,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:padding="15dp"
             android:id="@+id/dialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="15dp"
             android:text="showDialog"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
