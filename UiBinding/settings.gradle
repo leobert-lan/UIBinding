@@ -1,0 +1,3 @@
+include ':uibinding'
+include ':app'
+rootProject.name = "UiBinding"
