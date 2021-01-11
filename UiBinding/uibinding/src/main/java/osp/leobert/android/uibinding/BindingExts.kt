@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import osp.leobert.android.uibinding.binding.BindDataBinding
 import osp.leobert.android.uibinding.binding.BindView
@@ -25,6 +26,8 @@ fun Context.inflaterProvider() = object : LayoutInflaterProvider {
 
 fun View.bindClick(listener: ((View) -> Unit)?) =
     OnClickSetterDelegate.setOnClickListener(this, listener)
+
+//region dataBinding
 
 inline fun <reified T : ViewDataBinding> ComponentActivity.dataBinding(@LayoutRes resId: Int) =
     BindDataBinding<T>(
@@ -55,6 +58,35 @@ inline fun <reified T : ViewDataBinding> ComponentActivity.dataBinding(
         onBind = onBind
     )
 
+inline fun <reified T : ViewDataBinding> Fragment.dataBinding(@LayoutRes resId: Int) =
+    BindDataBinding<T>(
+        targetClazz = T::class.java,
+        inflaterProvider = object : LayoutInflaterProvider {
+            override fun provide(): LayoutInflater {
+                return LayoutInflater.from(this@dataBinding.requireContext())
+            }
+        },
+        resId = resId,
+        lifecycle = this.lifecycle,
+        onBind = null
+    )
+
+inline fun <reified T : ViewDataBinding> Fragment.dataBinding(
+    @LayoutRes resId: Int,
+    noinline onBind: (T.() -> Unit)?
+) =
+    BindDataBinding<T>(
+        targetClazz = T::class.java,
+        inflaterProvider = object : LayoutInflaterProvider {
+            override fun provide(): LayoutInflater {
+                return LayoutInflater.from(this@dataBinding.requireContext())
+            }
+        },
+        resId = resId,
+        lifecycle = this.lifecycle,
+        onBind = onBind
+    )
+
 inline fun <reified T : ViewDataBinding> Any.dataBinding(
     inflaterProvider: LayoutInflaterProvider,
     @LayoutRes resId: Int,
@@ -81,6 +113,9 @@ inline fun <reified T : ViewDataBinding> Any.dataBinding(
         lifecycle = lifecycle,
         onBind = onBind
     )
+//endregion
+
+//region bindView
 
 inline fun <reified T : View> ComponentActivity.bindView(@LayoutRes resId: Int) =
     BindView<T>(
@@ -111,7 +146,6 @@ inline fun <reified T : View> ComponentActivity.bindView(
         onBind = onBind
     )
 
-
 inline fun <reified T : View> Any.bindView(
     rootViewProvider: ViewProvider,
     @IdRes resId: Int,
@@ -136,6 +170,38 @@ inline fun <reified T : View> Any.bindView(
         rootViewProvider = rootViewProvider,
         resId = resId,
         lifecycle = lifecycle,
+        onBind = onBind
+    )
+//endregion
+
+//region bindViews
+
+inline fun <reified T : View> ComponentActivity.bindViews(resIds: List<Int>,) =
+    BindViews<T>(
+        targetClazz = T::class.java,
+        rootViewProvider = object : ViewProvider {
+            override fun provide(): View {
+                return this@bindViews.window.decorView
+            }
+        },
+        resIds = resIds,
+        lifecycle = this.lifecycle,
+        onBind = null
+    )
+
+inline fun <reified T : View> ComponentActivity.bindViews(
+    resIds: List<Int>,
+    noinline onBind: (List<T>.() -> Unit)?
+) =
+    BindViews<T>(
+        targetClazz = T::class.java,
+        rootViewProvider = object : ViewProvider {
+            override fun provide(): View {
+                return this@bindViews.window.decorView
+            }
+        },
+        resIds = resIds,
+        lifecycle = this.lifecycle,
         onBind = onBind
     )
 
@@ -165,3 +231,5 @@ inline fun <reified T : View> Any.bindViews(
         lifecycle = lifecycle,
         onBind = onBind
     )
+//endregion
+
