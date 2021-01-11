@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import osp.leobert.android.uibinding.binding.BindDataBinding
 import osp.leobert.android.uibinding.binding.BindView
 import osp.leobert.android.uibinding.binding.BindViews
+import osp.leobert.android.uibinding.binding.FindDataBinding
 
 /**
  * <p><b>Package:</b> osp.leobert.android.uibinding </p>
@@ -26,6 +27,70 @@ fun Context.inflaterProvider() = object : LayoutInflaterProvider {
 
 fun View.bindClick(listener: ((View) -> Unit)?) =
     OnClickSetterDelegate.setOnClickListener(this, listener)
+
+//region dataBinding
+
+inline fun <reified T : ViewDataBinding> ComponentActivity.dataBinding(viewProvider: ViewProvider) =
+    FindDataBinding<T>(
+        targetClazz = T::class.java,
+        viewProvider = viewProvider,
+        lifecycle = this.lifecycle,
+        onBind = null
+    )
+
+inline fun <reified T : ViewDataBinding> ComponentActivity.dataBinding(
+    viewProvider: ViewProvider,
+    noinline onBind: (T.() -> Unit)?
+) =
+    FindDataBinding<T>(
+        targetClazz = T::class.java,
+        viewProvider = viewProvider,
+        lifecycle = this.lifecycle,
+        onBind = onBind
+    )
+
+inline fun <reified T : ViewDataBinding> Fragment.dataBinding(viewProvider: ViewProvider) =
+    FindDataBinding<T>(
+        targetClazz = T::class.java,
+        viewProvider = viewProvider,
+        lifecycle = this.lifecycle,
+        onBind = null
+    )
+
+inline fun <reified T : ViewDataBinding> Fragment.dataBinding(
+    viewProvider: ViewProvider,
+    noinline onBind: (T.() -> Unit)?
+) =
+    FindDataBinding<T>(
+        targetClazz = T::class.java,
+        viewProvider = viewProvider,
+        lifecycle = this.lifecycle,
+        onBind = onBind
+    )
+
+inline fun <reified T : ViewDataBinding> Any.dataBinding(
+    viewProvider: ViewProvider,
+    lifecycle: Lifecycle
+) =
+    FindDataBinding<T>(
+        targetClazz = T::class.java,
+        viewProvider = viewProvider,
+        lifecycle = lifecycle,
+        onBind = null
+    )
+
+inline fun <reified T : ViewDataBinding> Any.dataBinding(
+    viewProvider: ViewProvider,
+    lifecycle: Lifecycle,
+    noinline onBind: (T.() -> Unit)?
+) =
+    FindDataBinding<T>(
+        targetClazz = T::class.java,
+        viewProvider = viewProvider,
+        lifecycle = lifecycle,
+        onBind = onBind
+    )
+//endregion
 
 //region dataBinding
 
@@ -176,7 +241,7 @@ inline fun <reified T : View> Any.bindView(
 
 //region bindViews
 
-inline fun <reified T : View> ComponentActivity.bindViews(resIds: List<Int>,) =
+inline fun <reified T : View> ComponentActivity.bindViews(resIds: List<Int>) =
     BindViews<T>(
         targetClazz = T::class.java,
         rootViewProvider = object : ViewProvider {
