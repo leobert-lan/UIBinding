@@ -26,7 +26,9 @@ import osp.leobert.android.uibinding.dataBinding
 import osp.leobert.android.uibindingsample.databinding.ActivityMainBinding
 
 class MainActivity2 : AppCompatActivity() ,ViewProvider{
-    val binding by dataBinding<ActivityMainBinding>(this)
+    val binding by dataBinding<ActivityMainBinding>(this).apply {
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

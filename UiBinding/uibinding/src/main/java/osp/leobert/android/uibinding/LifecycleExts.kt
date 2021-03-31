@@ -34,14 +34,28 @@ internal class OnDestroyObserver(var lifecycle: Lifecycle?, val destroyed: () ->
         val lifecycleState = source.lifecycle.currentState
         if (lifecycleState == Lifecycle.State.DESTROYED) {
             destroyed()
+        }
+    }
+}
+
+internal class OnDestroyObserverOnce(var lifecycle: Lifecycle?, val destroyed: () -> Unit) :
+    LifecycleEventObserver {
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        val lifecycleState = source.lifecycle.currentState
+        if (lifecycleState == Lifecycle.State.DESTROYED) {
+            destroyed()
             lifecycle?.apply {
-                removeObserver(this@OnDestroyObserver)
+                removeObserver(this@OnDestroyObserverOnce)
                 lifecycle = null
             }
         }
     }
 }
 
-fun Lifecycle.onDestroyOnce(destroyed: () -> Unit) {
+fun Lifecycle.onDestroy(destroyed: () -> Unit) {
     addObserver(OnDestroyObserver(this, destroyed))
+}
+
+fun Lifecycle.onDestroyOnce(destroyed: () -> Unit) {
+    addObserver(OnDestroyObserverOnce(this, destroyed))
 }
