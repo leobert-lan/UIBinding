@@ -65,21 +65,48 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
 
-def MAVEN_LOCAL_PATH = uri('../../local_repo')
+//def MAVEN_LOCAL_PATH = uri('../../local_repo')
 def ARTIFACT_ID = 'uibinding'
 def VERSION_NAME = '0.0.2'
 def GROUP_ID = 'osp.leobert.android'
 
-ext {
-    bintrayName = ARTIFACT_ID
-    artifact = ARTIFACT_ID
-    libraryName = ARTIFACT_ID
-    libraryDescription = 'handle databinding or viewbinding fetch; custom view-bind replace kae or Butterknife'
-    libraryVersion = VERSION_NAME
-    licenseName = 'Apache 2.0'
-    licenseUrl = 'https://github.com/leobert-lan/UiBinding/blob/master/LICENSE'
-    allLicenses = ["Apache 2.0"]
-}
+//ext {
+//    bintrayName = ARTIFACT_ID
+//    artifact = ARTIFACT_ID
+//    libraryName = ARTIFACT_ID
+//    libraryDescription = 'handle databinding or viewbinding fetch; custom view-bind replace kae or Butterknife'
+//    libraryVersion = VERSION_NAME
+//    licenseName = 'Apache 2.0'
+//    licenseUrl = 'https://github.com/leobert-lan/UiBinding/blob/master/LICENSE'
+//    allLicenses = ["Apache 2.0"]
+//}
+//
+//apply from: '../bintray_upload.gradle'
+//http://172.16.248.248:8081/repository/maven-releases/
+//http://172.16.248.248:8081/repository/maven-releases/
+//apply from: '../maven_upload.gradle'
 
-apply from: '../bintray_upload.gradle'
-apply from: '../maven_upload.gradle'
+apply plugin: 'maven'
+
+def MAVEN_LOCAL_PATH = uri(project.rootDir.parent + "/local_repo")
+////'http://remote.server:8081/nexus/content/repositories/jdd_android_maven/'
+def ACCOUNT = 'jdd_android'
+def PASSWORD = 'jdd123'
+
+
+//脚本：将Lib打成aar包上传至maven私有库
+uploadArchives() {
+    repositories {
+        mavenDeployer {
+            repository(url: MAVEN_LOCAL_PATH) {
+                authentication(userName: ACCOUNT, password: PASSWORD)
+            }
+            pom.project {
+                groupId GROUP_ID
+                artifactId ARTIFACT_ID
+                version VERSION_NAME
+                packaging 'aar'
+            }
+        }
+    }
+}
