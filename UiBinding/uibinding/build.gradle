@@ -59,8 +59,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.2.1'
-    testImplementation 'junit:junit:4.+'
+    implementation 'com.google.android.material:material:1.3.0'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
@@ -68,7 +68,8 @@ dependencies {
 //def MAVEN_LOCAL_PATH = uri('../../local_repo')
 def ARTIFACT_ID = 'uibinding'
 def VERSION_NAME = '0.0.2'
-def GROUP_ID = 'osp.leobert.android'
+def GROUP_ID = 'io.github.leobert-lan'
+        //'osp.leobert.android'
 
 //ext {
 //    bintrayName = ARTIFACT_ID
@@ -88,10 +89,15 @@ def GROUP_ID = 'osp.leobert.android'
 
 apply plugin: 'maven'
 
-def MAVEN_LOCAL_PATH = uri(project.rootDir.parent + "/local_repo")
-////'http://remote.server:8081/nexus/content/repositories/jdd_android_maven/'
-def ACCOUNT = 'jdd_android'
-def PASSWORD = 'jdd123'
+def MAVEN_LOCAL_PATH = 'https://s01.oss.sonatype.org/content/repositories/releases/'
+
+Properties properties = new Properties()
+InputStream inputStream = project.rootProject.file('local.properties').newDataInputStream()
+properties.load(inputStream)
+//        uri(project.rootDir.parent + "/local_repo")
+def ACCOUNT = properties.get("nexus_user", "")
+def PASSWORD = properties.get("nexus_pwd", "")
+
 
 
 //脚本：将Lib打成aar包上传至maven私有库
