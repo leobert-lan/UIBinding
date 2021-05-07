@@ -65,11 +65,11 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
 
-//def MAVEN_LOCAL_PATH = uri('../../local_repo')
+def MAVEN_LOCAL_PATH = uri('../../local_repo')
 def ARTIFACT_ID = 'uibinding'
 def VERSION_NAME = '0.0.2'
 def GROUP_ID = 'io.github.leobert-lan'
-        //'osp.leobert.android'
+//'osp.leobert.android'
 
 //ext {
 //    bintrayName = ARTIFACT_ID
@@ -89,7 +89,7 @@ def GROUP_ID = 'io.github.leobert-lan'
 
 apply plugin: 'maven'
 
-def MAVEN_LOCAL_PATH = 'https://s01.oss.sonatype.org/content/repositories/releases/'
+//def MAVEN_LOCAL_PATH = 'https://s01.oss.sonatype.org/content/repositories/releases/'
 
 Properties properties = new Properties()
 InputStream inputStream = project.rootProject.file('local.properties').newDataInputStream()
@@ -98,7 +98,32 @@ properties.load(inputStream)
 def ACCOUNT = properties.get("nexus_user", "")
 def PASSWORD = properties.get("nexus_pwd", "")
 
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
 
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+}
+
+artifacts {
+    archives sourcesJar
+//    archives javadocJar
+}
 
 //脚本：将Lib打成aar包上传至maven私有库
 uploadArchives() {
@@ -112,6 +137,31 @@ uploadArchives() {
                 artifactId ARTIFACT_ID
                 version VERSION_NAME
                 packaging 'aar'
+
+                name ARTIFACT_ID
+                description ARTIFACT_ID
+                url siteUrl
+
+                // Set your license
+                licenses {
+                    license {
+                        name 'Apache 2.0'
+                        url 'https://github.com/leobert-lan/UiBinding/blob/master/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'leobert'
+                        name 'leobert'
+                        email 'leobert.l@hotmail.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+
+                }
             }
         }
     }
