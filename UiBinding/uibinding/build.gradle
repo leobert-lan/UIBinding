@@ -71,23 +71,12 @@ def VERSION_NAME = '0.0.2'
 def GROUP_ID = 'io.github.leobert-lan'
 //'osp.leobert.android'
 
-//ext {
-//    bintrayName = ARTIFACT_ID
-//    artifact = ARTIFACT_ID
-//    libraryName = ARTIFACT_ID
-//    libraryDescription = 'handle databinding or viewbinding fetch; custom view-bind replace kae or Butterknife'
-//    libraryVersion = VERSION_NAME
-//    licenseName = 'Apache 2.0'
-//    licenseUrl = 'https://github.com/leobert-lan/UiBinding/blob/master/LICENSE'
-//    allLicenses = ["Apache 2.0"]
-//}
-//
+
 //apply from: '../bintray_upload.gradle'
 //http://172.16.248.248:8081/repository/maven-releases/
 //http://172.16.248.248:8081/repository/maven-releases/
 //apply from: '../maven_upload.gradle'
 
-apply plugin: 'maven'
 
 //def MAVEN_LOCAL_PATH = 'https://s01.oss.sonatype.org/content/repositories/releases/'
 
@@ -97,6 +86,10 @@ properties.load(inputStream)
 //        uri(project.rootDir.parent + "/local_repo")
 def ACCOUNT = properties.get("nexus_user", "")
 def PASSWORD = properties.get("nexus_pwd", "")
+
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
 
 task sourcesJar(type: Jar) {
     classifier = 'sources'
@@ -125,7 +118,7 @@ artifacts {
 //    archives javadocJar
 }
 
-//脚本：将Lib打成aar包上传至maven私有库
+////脚本：将Lib打成aar包上传至maven私有库
 uploadArchives() {
     repositories {
         mavenDeployer {
@@ -160,7 +153,6 @@ uploadArchives() {
                     connection gitUrl
                     developerConnection gitUrl
                     url siteUrl
-
                 }
             }
         }
