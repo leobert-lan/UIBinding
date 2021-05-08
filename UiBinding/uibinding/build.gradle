@@ -19,6 +19,8 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'signing'
+    id 'maven-publish'
 }
 
 android {
@@ -72,10 +74,7 @@ def GROUP_ID = 'io.github.leobert-lan'
 //'osp.leobert.android'
 
 
-//apply from: '../bintray_upload.gradle'
 //http://172.16.248.248:8081/repository/maven-releases/
-//http://172.16.248.248:8081/repository/maven-releases/
-//apply from: '../maven_upload.gradle'
 
 
 //def MAVEN_LOCAL_PATH = 'https://s01.oss.sonatype.org/content/repositories/releases/'
@@ -87,9 +86,7 @@ properties.load(inputStream)
 def ACCOUNT = properties.get("nexus_user", "")
 def PASSWORD = properties.get("nexus_pwd", "")
 
-apply plugin: 'maven'
-apply plugin: 'signing'
-apply plugin: 'maven-publish'
+//apply plugin: 'maven'
 
 task sourcesJar(type: Jar) {
     classifier = 'sources'
@@ -99,6 +96,7 @@ task sourcesJar(type: Jar) {
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    exclude 'osp/leobert/android/uibinding/**'
 }
 
 
@@ -115,46 +113,113 @@ tasks.withType(Javadoc) {
 
 artifacts {
     archives sourcesJar
-//    archives javadocJar
+    archives javadocJar
 }
-
-////脚本：将Lib打成aar包上传至maven私有库
-uploadArchives() {
-    repositories {
-        mavenDeployer {
-            repository(url: MAVEN_LOCAL_PATH) {
-                authentication(userName: ACCOUNT, password: PASSWORD)
-            }
-            pom.project {
+afterEvaluate {
+    publishing {
+        publications {
+            mavenAndroid(MavenPublication) {
                 groupId GROUP_ID
                 artifactId ARTIFACT_ID
                 version VERSION_NAME
-                packaging 'aar'
+                artifact sourcesJar
+                artifact javadocJar
+                artifact('build/outputs/aar/uibinding-release.aar')
+                // 配置 pom 文件格式
+                pom {
 
-                name ARTIFACT_ID
-                description ARTIFACT_ID
-                url siteUrl
+                    groupId = GROUP_ID
+                    artifactId = ARTIFACT_ID
+                    version = VERSION_NAME
+//                上面是自己加的
 
-                // Set your license
-                licenses {
-                    license {
-                        name 'Apache 2.0'
-                        url 'https://github.com/leobert-lan/UiBinding/blob/master/LICENSE'
+                    packaging = 'aar'
+                    name = ARTIFACT_ID
+                    description = ARTIFACT_ID
+                    url = siteUrl
+//                licenses {
+//                    license {
+//                        name='The Apache Software License, Version 2.0'
+//                        url='http://www.apache.org/licenses/LICENSE-2.0.txt'
+//                    }
+//                }
+                    licenses {
+                        license {
+                            name = 'Apache 2.0'
+                            url = 'https://github.com/leobert-lan/UiBinding/blob/master/LICENSE'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'leobert'
+                            name = 'leobert'
+                            email = 'leobert.l@hotmail.com'
+                        }
+                    }
+                    scm {
+                        connection = siteUrl
+                        developerConnection = gitUrl
+                        url = siteUrl
                     }
                 }
-                developers {
-                    developer {
-                        id 'leobert'
-                        name 'leobert'
-                        email 'leobert.l@hotmail.com'
-                    }
-                }
-                scm {
-                    connection gitUrl
-                    developerConnection gitUrl
-                    url siteUrl
+            }
+        }
+        // 配置远程仓库
+        repositories {
+            maven {
+                // 发布地址，新申请的项目发布地址为：https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/
+//            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+                url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+                credentials {
+                    username ACCOUNT
+                    password PASSWORD
                 }
             }
         }
     }
+
+    signing {
+        sign publishing.publications.mavenAndroid
+    }
 }
+
+////脚本：将Lib打成aar包上传至maven私有库
+//uploadArchives() {
+//    repositories {
+//        mavenDeployer {
+//            repository(url: MAVEN_LOCAL_PATH) {
+//                authentication(userName: ACCOUNT, password: PASSWORD)
+//            }
+//            pom.project {
+//                groupId GROUP_ID
+//                artifactId ARTIFACT_ID
+//                version VERSION_NAME
+//                packaging 'aar'
+//
+//                name ARTIFACT_ID
+//                description ARTIFACT_ID
+//                url siteUrl
+//
+//                // Set your license
+//                licenses {
+//                    license {
+//                        name 'Apache 2.0'
+//                        url 'https://github.com/leobert-lan/UiBinding/blob/master/LICENSE'
+//                    }
+//                }
+//                developers {
+//                    developer {
+//                        id 'leobert'
+//                        name 'leobert'
+//                        email 'leobert.l@hotmail.com'
+//                    }
+//                }
+//                scm {
+//                    connection gitUrl
+//                    developerConnection gitUrl
+//                    url siteUrl
+//                }
+//            }
+//        }
+//    }
+//}
